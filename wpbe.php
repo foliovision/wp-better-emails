@@ -255,8 +255,6 @@ For any requests, please contact %admin_email%'
 		 */
 		function validate_options( $input ) {
 
-			return $input;
-
 			$from_email = strtolower( $input['from_email'] );
 
 			// Checking emails
@@ -650,7 +648,7 @@ For any requests, please contact %admin_email%'
 		 */
 		function plaintext_template_editor() {
 ?>
-			<textarea id="wpbe_plaintext_template" class="wpbe_template" name="wpbe_options[plaintext_template]" cols="120" rows="10"><?php echo $this->options['plaintext_template']; ?></textarea>
+			<textarea id="wpbe_plaintext_template" class="wpbe_template" name="wpbe_options[plaintext_template]" cols="120" rows="10"><?php echo esc_textarea( $this->options['plaintext_template'] ); ?></textarea>
 		<?php
 		}
 
