@@ -74,6 +74,15 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 			// Filters
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
 
+			/**
+			 * Restrict Content Pro
+			 */
+
+			// Force "none" template if using "Process HTML emails".
+			add_filter( 'rcp_email_template', array( $this, 'rcp_email_template' ) );
+
+			// Remove all the other templates from settings.
+			add_filter( 'rcp_email_templates', array( $this, 'rcp_email_templates' ) );
 		}
 
 		/**
@@ -459,7 +468,7 @@ For any requests, please contact %admin_email%'
 				$this->send_as_html = true;
 				return $content_type = 'text/html';
 			} else {
-				$process_html = isset($this->options['process_html']) ? $this->options['process_html'] : false;
+				$process_html = isset( $this->options['process_html'] ) ? $this->options['process_html'] : false;
 
 				$this->send_as_html = apply_filters( 'wpbe_send_as_html', $process_html );
 
@@ -558,6 +567,20 @@ For any requests, please contact %admin_email%'
 
 			return $message;
 
+		}
+
+		public function rcp_email_template( $template ) {
+			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
+				return 'none';
+			}
+			return $template;
+		}
+
+		public function rcp_email_templates( $templates ) {
+			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
+				return array( 'none' => __( 'Using WP Better Emails template', 'wp-better-emails' ) );
+			}
+			return $templates;
 		}
 
 		/**
