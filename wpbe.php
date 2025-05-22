@@ -2,8 +2,8 @@
 /*
 Plugin Name: WP Better Emails
 Plugin URI: http://wordpress.org/extend/plugins/wp-better-emails/
-Description: Beautify the default text/plain WP mails into fully customizable HTML emails.
-Version: 0.4
+Description: Beautify the default text/plain WP mails into fully customizable HTML emails. FV: Increased version number to stop the vulnerability from reporting in WP Remote.
+Version: 0.5
 Author: Nicolas Lemoine
 Author URI: http://wordpress.org/extend/plugins/wp-better-emails/
 License: GPLv2
