@@ -15,7 +15,14 @@
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="wpbe_from_email"><?php _e('Email address', 'wp-better-emails'); ?></label></th>
-				<td><input type="text" id="wpbe_from_email" class="regular-text" name="wpbe_options[from_email]" value="<?php esc_attr_e($this->options['from_email']); ?>" /></td>
+				<td><input type="text" id="wpbe_from_email" class="regular-text" name="wpbe_options[from_email]" value="<?php echo esc_attr_e($this->options['from_email']); ?>" /></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><label for="wpbe_process_html"><?php _e('Process HTML emails', 'wp-better-emails'); ?></label></th>
+				<td>
+					<input type="checkbox" id="wpbe_process_html" name="wpbe_options[process_html]" value="1" <?php checked(isset($this->options['process_html']) ? $this->options['process_html'] : 0); ?> />
+					<span class="description"><?php _e('Enable this to process HTML emails through the template system', 'wp-better-emails'); ?></span>
+				</td>
 			</tr>
 		</table>
 

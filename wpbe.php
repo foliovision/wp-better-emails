@@ -113,7 +113,8 @@ For any requests, please contact %admin_email%'
 				'from_email'         => '',
 				'from_name'          => '',
 				'template'           => $template,
-				'plaintext_template' => $plaintext
+				'plaintext_template' => $plaintext,
+				'process_html'       => 0
 			);
 
 			// If option doesn't exist, save default option
@@ -458,7 +459,17 @@ For any requests, please contact %admin_email%'
 				$this->send_as_html = true;
 				return $content_type = 'text/html';
 			} else {
-				$this->send_as_html = false;
+				$process_html = isset($this->options['process_html']) ? $this->options['process_html'] : false;
+
+				$this->send_as_html = apply_filters( 'wpbe_send_as_html', $process_html );
+
+				// If we are forcing HTML, we don't want to convert line breaks
+				if ( $process_html ) {
+					add_filter( 'wpbe_convert_line_breaks', '__return_false' );
+
+				} else {
+					add_filter( 'wpbe_convert_line_breaks', '__return_true' );
+				}
 			}
 			return $content_type;
 		}
