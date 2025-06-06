@@ -86,6 +86,33 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 				add_filter( 'rcp_email_templates', array( $this, 'rcp_email_templates' ) );
 			}
 
+			/**
+			 * Easy Digital Downloads support, if using "Process HTML emails".
+			 */
+
+			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
+				// Replace EDD email template selection with 'Using WP Better Emails template' to make it clear what's going on.
+				// Although it's not perfect, as if the settings are set to use 'none', the 'No template, plain text only' template,
+				// EDD will strip all the HTML before we can get to it.
+				// We cannot override the stored setting value using a filter, we could use update_option() to change it.
+				add_filter( 'edd_email_templates', array( $this, 'edd_email_templates_remove_plaintext_template' ), 999 );
+
+				// Remove EDD email header and footer template if using "Process HTML emails".
+				add_filter( 'edd_get_template_part', array( $this, 'edd_get_template_part_remove_header_footer' ), 999, 3 );
+			}
+
+		}
+
+		public function edd_email_templates_remove_plaintext_template( $templates ) {
+			return array( 'none' => __( 'Using WP Better Emails template', 'wp-better-emails' ) );
+		}
+
+		public function edd_get_template_part_remove_header_footer( $templates, $slug, $name ) {
+			if ( 'emails/header' === $slug || 'emails/footer' === $slug ) {
+				return false;
+			}
+
+			return $templates;
 		}
 
 		/**
