@@ -75,14 +75,17 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
 
 			/**
-			 * Restrict Content Pro
+			 * Restrict Content Pro support, if using "Process HTML emails".
 			 */
 
-			// Force "none" template if using "Process HTML emails".
-			add_filter( 'rcp_email_template', array( $this, 'rcp_email_template' ) );
+			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
+				// Force "none" template 
+				add_filter( 'rcp_email_template', array( $this, 'rcp_email_template' ) );
 
-			// Remove all the other templates from settings.
-			add_filter( 'rcp_email_templates', array( $this, 'rcp_email_templates' ) );
+				// Remove all the other templates from settings.
+				add_filter( 'rcp_email_templates', array( $this, 'rcp_email_templates' ) );
+			}
+
 		}
 
 		/**
@@ -570,17 +573,11 @@ For any requests, please contact %admin_email%'
 		}
 
 		public function rcp_email_template( $template ) {
-			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
-				return 'none';
-			}
-			return $template;
+			return 'none';
 		}
 
 		public function rcp_email_templates( $templates ) {
-			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
-				return array( 'none' => __( 'Using WP Better Emails template', 'wp-better-emails' ) );
-			}
-			return $templates;
+			return array( 'none' => __( 'Using WP Better Emails template', 'wp-better-emails' ) );
 		}
 
 		/**
