@@ -60,19 +60,7 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 			add_filter( 'mandrill_payload', array( $this, 'wpmandrill_compatibility' ) );
 
 			/**
-			 * Restrict Content Pro support, if using "Process HTML emails".
-			 */
-
-			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
-				// Force "none" template 
-				add_filter( 'rcp_email_template', array( $this, 'rcp_email_template' ) );
-
-				// Remove all the other templates from settings.
-				add_filter( 'rcp_email_templates', array( $this, 'rcp_email_templates' ) );
-			}
-
-			/**
-			 * Easy Digital Downloads support, if using "Process HTML emails".
+			 * Easy Digital Downloads and Restrict Content Pro support, if using "Process HTML emails".
 			 */
 
 			if ( isset( $this->options['process_html'] ) && $this->options['process_html'] ) {
@@ -80,10 +68,12 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 				// Although it's not perfect, as if the settings are set to use 'none', the 'No template, plain text only' template,
 				// EDD will strip all the HTML before we can get to it.
 				// We cannot override the stored setting value using a filter, we could use update_option() to change it.
-				add_filter( 'edd_email_templates', array( $this, 'edd_email_templates_remove_plaintext_template' ), 999 );
+				add_filter( 'edd_email_templates', array( $this, 'edd_rcp_email_templates_wp_better_emails_only' ), 999 );
+				add_filter( 'rcp_email_templates', array( $this, 'edd_rcp_email_templates_wp_better_emails_only' ) );
 
 				// Remove EDD email header and footer template if using "Process HTML emails".
-				add_filter( 'edd_get_template_part', array( $this, 'edd_get_template_part_remove_header_footer' ), 999, 3 );
+				add_filter( 'edd_get_template_part', array( $this, 'edd_and_rcp_get_template_part_remove_header_footer' ), 999, 3 );
+				add_filter( 'rcp_get_template_part', array( $this, 'edd_and_rcp_get_template_part_remove_header_footer' ), 999, 3 );
 			}
 
 			if ( ! is_admin() ) {
@@ -102,11 +92,12 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
 		}
 
-		public function edd_email_templates_remove_plaintext_template( $templates ) {
-			return array( 'none' => __( 'Using WP Better Emails template', 'wp-better-emails' ) );
+		public function edd_rcp_email_templates_wp_better_emails_only( $templates ) {
+			// The key must not be 'none', otherwise EDD and RCP would strip all the HTML before we can get to it.
+			return array( 'wp-better-emails' => __( 'Using WP Better Emails template', 'wp-better-emails' ) );
 		}
 
-		public function edd_get_template_part_remove_header_footer( $templates, $slug, $name ) {
+		public function edd_and_rcp_get_template_part_remove_header_footer( $templates, $slug, $name ) {
 			if ( 'emails/header' === $slug || 'emails/footer' === $slug ) {
 				return false;
 			}
@@ -596,14 +587,6 @@ For any requests, please contact %admin_email%'
 
 			return $message;
 
-		}
-
-		public function rcp_email_template( $template ) {
-			return 'none';
-		}
-
-		public function rcp_email_templates( $templates ) {
-			return array( 'none' => __( 'Using WP Better Emails template', 'wp-better-emails' ) );
 		}
 
 		/**
