@@ -59,21 +59,6 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 			add_action( 'phpmailer_init',   array( $this, 'send_html' ) );
 			add_filter( 'mandrill_payload', array( $this, 'wpmandrill_compatibility' ) );
 
-			if ( ! is_admin() ) {
-				return;
-			}
-
-			// Load translations
-			load_plugin_textdomain( 'wp-better-emails', null, basename( dirname( __FILE__ ) ) . '/langs/' );
-
-			// Actions
-			add_action( 'admin_init',           array( $this, 'init' ) );
-			add_action( 'admin_menu',           array( $this, 'admin_menu' ) );
-			add_action( 'wp_ajax_send_preview', array( $this, 'ajax_send_preview' ) );
-
-			// Filters
-			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
-
 			/**
 			 * Restrict Content Pro support, if using "Process HTML emails".
 			 */
@@ -101,6 +86,20 @@ if ( ! class_exists( 'WP_Better_Emails' ) ) {
 				add_filter( 'edd_get_template_part', array( $this, 'edd_get_template_part_remove_header_footer' ), 999, 3 );
 			}
 
+			if ( ! is_admin() ) {
+				return;
+			}
+
+			// Load translations
+			load_plugin_textdomain( 'wp-better-emails', null, basename( dirname( __FILE__ ) ) . '/langs/' );
+
+			// Actions
+			add_action( 'admin_init',           array( $this, 'init' ) );
+			add_action( 'admin_menu',           array( $this, 'admin_menu' ) );
+			add_action( 'wp_ajax_send_preview', array( $this, 'ajax_send_preview' ) );
+
+			// Filters
+			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
 		}
 
 		public function edd_email_templates_remove_plaintext_template( $templates ) {
